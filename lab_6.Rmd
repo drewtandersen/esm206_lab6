@@ -14,7 +14,6 @@ library(broom)
 library(equatiomatic)
 ```
 
-
 ## Rank based test example
 
 Mann-Whitney U (non-parametric alternative to an unpiared 1-sample t-test)
@@ -22,7 +21,7 @@ H0: Equal ranks(or medians) - "perfectly intermingeled"
 HA: Ranks are not equal (or, medians are not equal)
 
 ### Create samples
-`r set.seed()` to create "pseudorandom, but not reproducible sample"
+set.seed() to create "pseudorandom, but not reproducible sample"
 
 ```{r}
 set.seed(1414)
@@ -56,4 +55,48 @@ mwu <- wilcox.test(gp_1, gp_2)
 ```
 use the same def as above, but replace "mean" with "median"
 - no sig siff in medians (Mann-Whitney U; U = `r mwu$statistic`, p = `r round(mwu$p.value, 2)`)
+
+Example text for reporting: the medians of group a (m =22.4) and group B (m = 31) did not differ sig (mann-whitney- U test))
+
+### Simple Linear Regression
+
+Two continuous, quantitative ariables that you are trying to understand the relationship between, and you think that a linear relationship makes sense. 
+
+Use the penguins data from palmer penguins exploring flipper length (x) and body mass (y).
+
+```{r}
+# Use view(penguins) to look at it
+# make an exploratory scatterplot of penguin flipper length(x-axis) verus mass(y-axis)
+
+ggplot(data = penguins, aes(flipper_length_mm, body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+### Find the model estimates (coefficients)
+
+Use the `lm()` function for linear model. 
+
+```{r}
+penguin_lm <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+```
+Use summary(penguin_lm)
+
+`r penguin_lm$coefficients[1]`
+
+#### use broom::tidy() to get a tidy output from lm()
+#### or use broom::glance() to get quick statistics 
+```{r}
+penguin_lm_tidy <- tidy(penguin_lm)
+penguin_lm_glance <- glance(penguin_lm)
+```
+
+### Use equatiomatic::extract_eq() to return model in LaTeX
+```{r}
+extract_eq(model = penguin_lm, use_coefs = TRUE)
+```
+#### Useplot() functionm to automatically produce diagnostic plots
+```{r}
+plot(penguin_lm)
+```
 
